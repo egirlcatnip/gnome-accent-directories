@@ -1,0 +1,9 @@
+{
+  "name": "Accent Directories",
+  "description": "Makes Directory icons follow system accent color",
+  "uuid": "accent-directories@taiwbi.com",
+  "shell-version": ["47"],
+  "version": 1,
+  "version-name": "1.0",
+  "url": "https://github.com/taiwbi/gnome-accent-directories"
+}

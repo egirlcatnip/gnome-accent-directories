@@ -1,0 +1,34 @@
+[Icon Theme]
+Name=MoreWaita-Purple
+Comment=An expanded Adwaita-styled companion icon theme with extra icons for popular apps to complement Gnome Shell's original icons.
+Inherits=MoreWaita,Adwaita,AdwaitaLegacy,hicolor
+Example=pamac
+
+# KDE/Plasma Stuff
+DisplayDepth=32
+LinkOverlay=link_overlay
+LockOverlay=lock_overlay
+ZipOverlay=zip_overlay
+DesktopDefault=48
+DesktopSizes=16,22,32,48,64,72,96,128
+ToolbarDefault=22
+ToolbarSizes=16,22,32,48
+MainToolbarDefault=22
+MainToolbarSizes=16,22,32,48
+SmallDefault=16
+SmallSizes=16
+PanelDefault=32
+PanelSizes=16,22,32,48,64,72,96,128
+FollowsColorScheme=true
+
+KDE-Extensions=.svg
+
+# Directory list
+Directories=scalable/places
+
+[scalable/places]
+Size=96
+Context=Places
+MinSize=16
+MaxSize=512
+Type=Scalable
