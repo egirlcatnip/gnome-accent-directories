@@ -131,7 +131,7 @@ export default class AccentColorIconThemeExtension extends Extension {
     };
 
     // Get the corresponding icon theme or default to base theme
-    const iconTheme = iconThemeMap[accentColor] || "MoreWaita";
+    const iconTheme = iconThemeMap[accentColor] || "Adwaita";
 
     // Set the icon theme
     this._setIconTheme(iconTheme);
