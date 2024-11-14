@@ -58,7 +58,7 @@ export default class AccentColorIconThemeExtension extends Extension {
 
   _installMissingIconThemes() {
     const iconThemes = [
-      "MoreWaita",
+      "MoreWaita-Blue",
       "MoreWaita-Green",
       "MoreWaita-Orange",
       "MoreWaita-Pink",
@@ -119,7 +119,7 @@ export default class AccentColorIconThemeExtension extends Extension {
 
     // Map accent colors to icon themes
     const iconThemeMap = {
-      blue: "MoreWaita",
+      blue: "MoreWaita-Blue",
       teal: "MoreWaita-Teal",
       green: "MoreWaita-Green",
       yellow: "MoreWaita-Yellow",
