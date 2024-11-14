@@ -50,6 +50,7 @@ export default class AccentColorIconThemeExtension extends Extension {
     if (this._settings && this._accentColorChangedId) {
       this._settings.disconnect(this._accentColorChangedId);
       this._accentColorChangedId = 0;
+      this._settings = null;
     }
 
     // Optionally reset to default icon theme
