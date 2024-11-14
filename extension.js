@@ -58,19 +58,19 @@ export default class AccentColorIconThemeExtension extends Extension {
 
   _installMissingIconThemes() {
     const iconThemes = [
-      "MoreWaita-Blue",
-      "MoreWaita-Green",
-      "MoreWaita-Orange",
-      "MoreWaita-Pink",
-      "MoreWaita-Purple",
-      "MoreWaita-Red",
-      "MoreWaita-Slate",
-      "MoreWaita-Teal",
-      "MoreWaita-Yellow",
+      "Adwaita-Blue-Default",
+      "Adwaita-Green",
+      "Adwaita-Orange",
+      "Adwaita-Pink",
+      "Adwaita-Purple",
+      "Adwaita-Red",
+      "Adwaita-Slate",
+      "Adwaita-Teal",
+      "Adwaita-Yellow",
     ];
 
     const localIconsDir = GLib.get_home_dir() + "/.local/share/icons/";
-    const extensionAssetsDir = this.path + "/assets/";
+    const extensionIconsDir = this.path + "/icons/";
 
     // Create the local icons directory if it doesn't exist
     if (!GLib.file_test(localIconsDir, GLib.FileTest.EXISTS)) {
@@ -80,8 +80,8 @@ export default class AccentColorIconThemeExtension extends Extension {
     iconThemes.forEach((theme) => {
       const themeDir = localIconsDir + theme;
       if (!GLib.file_test(themeDir, GLib.FileTest.EXISTS)) {
-        // Copy the theme from assets to local icons directory
-        const sourceDir = extensionAssetsDir + theme;
+        // Copy the theme from icons to local icons directory
+        const sourceDir = extensionIconsDir + theme;
         this._copyDirectory(sourceDir, themeDir);
       }
     });
@@ -119,15 +119,15 @@ export default class AccentColorIconThemeExtension extends Extension {
 
     // Map accent colors to icon themes
     const iconThemeMap = {
-      blue: "MoreWaita-Blue",
-      teal: "MoreWaita-Teal",
-      green: "MoreWaita-Green",
-      yellow: "MoreWaita-Yellow",
-      orange: "MoreWaita-Orange",
-      red: "MoreWaita-Red",
-      pink: "MoreWaita-Pink",
-      purple: "MoreWaita-Purple",
-      slate: "MoreWaita-Slate",
+      blue: "Adwaita-Blue-Default",
+      teal: "Adwaita-Teal",
+      green: "Adwaita-Green",
+      yellow: "Adwaita-Yellow",
+      orange: "Adwaita-Orange",
+      red: "Adwaita-Red",
+      pink: "Adwaita-Pink",
+      purple: "Adwaita-Purple",
+      slate: "Adwaita-Slate",
     };
 
     // Get the corresponding icon theme or default to base theme
