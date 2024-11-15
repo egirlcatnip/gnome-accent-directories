@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
-import { Extension } from "resource:///org/gnome/shell/extensions/extension.js";
+import {Extension} from "resource:///org/gnome/shell/extensions/extension.js";
 import GLib from "gi://GLib";
 import Gio from "gi://Gio";
 
@@ -82,11 +82,20 @@ export default class AccentColorIconThemeExtension extends Extension {
 
     iconThemes.forEach((theme) => {
       const themeDir = localIconsDir + theme;
-      if (!GLib.file_test(themeDir, GLib.FileTest.EXISTS)) {
+
+      // Check if newest icon is available in icon pack
+      if (!GLib.file_test(themeDir + "/scalable/apps/org.gnome.Nautilus.svg", GLib.FileTest.EXISTS)) {
+
+        // Remove the old theme directory if it exists
+        if (GLib.file_test(themeDir, GLib.FileTest.EXISTS)) {
+          this._removeDirectoryRecursively(themeDir);
+        }
+
         // Copy the theme from icons to local icons directory
         const sourceDir = extensionIconsDir + theme;
         this._copyDirectory(sourceDir, themeDir);
       }
+
     });
   }
 
@@ -115,6 +124,29 @@ export default class AccentColorIconThemeExtension extends Extension {
       }
     }
   }
+
+  _removeDirectoryRecursively(path) {
+    let file = Gio.File.new_for_path(path);
+
+    // Get the contents of the directory
+    let enumerator = file.enumerate_children('standard::*', Gio.FileQueryInfoFlags.NONE, null);
+    let info;
+
+    // Iterate through the contents
+    while ((info = enumerator.next_file(null)) !== null) {
+      let childFile = file.get_child(info.get_name());
+      // Recursively remove the child file or directory
+      if (info.get_file_type() === Gio.FileType.DIRECTORY) {
+        this._removeDirectoryRecursively(childFile.get_path());
+      } else {
+        childFile.delete(null); // Delete the file
+      }
+    }
+
+    // Remove the empty directory
+    file.delete(null); // Permanently delete the directory
+  }
+
 
   _onAccentColorChanged() {
     // Get the current accent color
