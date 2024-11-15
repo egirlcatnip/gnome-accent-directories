@@ -52,11 +52,11 @@ export default class AccentColorIconThemeExtension extends Extension {
       this._accentColorChangedId = 0;
     }
 
-    // Null out this._settings
-    this._settings = null;
-
     // Optionally reset to default icon theme
     this._setIconTheme("Adwaita");
+
+    // Null out this._settings
+    this._settings = null;
   }
 
   _installMissingIconThemes() {
