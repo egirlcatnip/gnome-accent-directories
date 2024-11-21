@@ -15,16 +15,13 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
-import {Extension} from "resource:///org/gnome/shell/extensions/extension.js";
-import GLib from "gi://GLib";
-import Gio from "gi://Gio";
+import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
+import GLib from 'gi://GLib';
+import Gio from 'gi://Gio';
 
 export default class AccentColorIconThemeExtension extends Extension {
-  constructor(metadata) {
-    super(metadata);
-    this._settings = null;
-    this._accentColorChangedId = 0;
-  }
+  _settings?: Gio.Settings | null;
+  _accentColorChangedId: number = 0;
 
   enable() {
     // Get the interface settings
@@ -99,7 +96,7 @@ export default class AccentColorIconThemeExtension extends Extension {
     });
   }
 
-  _copyDirectory(sourceDir, destDir) {
+  _copyDirectory(sourceDir: string, destDir: string) {
     const sourceFile = Gio.File.new_for_path(sourceDir);
     const destFile = Gio.File.new_for_path(destDir);
 
@@ -125,7 +122,7 @@ export default class AccentColorIconThemeExtension extends Extension {
     }
   }
 
-  _removeDirectoryRecursively(path) {
+  _removeDirectoryRecursively(path: string) {
     let file = Gio.File.new_for_path(path);
 
     // Get the contents of the directory
@@ -135,9 +132,12 @@ export default class AccentColorIconThemeExtension extends Extension {
     // Iterate through the contents
     while ((info = enumerator.next_file(null)) !== null) {
       let childFile = file.get_child(info.get_name());
+      let childPath = childFile.get_path();
+      // continue if childPath is null
+      if (childPath == null) continue;
       // Recursively remove the child file or directory
       if (info.get_file_type() === Gio.FileType.DIRECTORY) {
-        this._removeDirectoryRecursively(childFile.get_path());
+        this._removeDirectoryRecursively(childPath);
       } else {
         childFile.delete(null); // Delete the file
       }
@@ -150,10 +150,10 @@ export default class AccentColorIconThemeExtension extends Extension {
 
   _onAccentColorChanged() {
     // Get the current accent color
-    const accentColor = this._settings.get_string("accent-color");
+    const accentColor: string = this._settings?.get_string("accent-color") ?? "blue";
 
     // Map accent colors to icon themes
-    const iconThemeMap = {
+    const iconThemeMap: { [key: string]: string } = {
       blue: "Adwaita-Blue-Default",
       teal: "Adwaita-Teal",
       green: "Adwaita-Green",
@@ -172,8 +172,8 @@ export default class AccentColorIconThemeExtension extends Extension {
     this._setIconTheme(iconTheme);
   }
 
-  _setIconTheme(themeName) {
+  _setIconTheme(themeName: string) {
     // Set the icon theme
-    this._settings.set_string("icon-theme", themeName);
+    this._settings?.set_string("icon-theme", themeName);
   }
 }

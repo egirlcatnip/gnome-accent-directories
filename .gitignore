@@ -1,1 +1,4 @@
-.idea
+node_modules/
+.idea/
+dist/
+accent-directories@taiwbi.com.zip
