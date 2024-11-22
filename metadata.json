@@ -1,9 +1,9 @@
 {
-  "name": "Accent Directories",
-  "description": "Makes Directory icons follow system accent color and can be used with MoreWaita",
+  "name": "Accent Icons",
+  "description": "Makes icons follow system accent color and can be used with MoreWaita",
   "uuid": "accent-directories@taiwbi.com",
   "shell-version": ["47"],
   "version": 6,
-  "version-name": "1.1",
+  "version-name": "1.2",
   "url": "https://github.com/taiwbi/gnome-accent-directories"
 }
