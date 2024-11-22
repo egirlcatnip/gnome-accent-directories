@@ -208,8 +208,6 @@ export default class AccentColorIconThemeExtension extends Extension {
   }
 
   _onAppIconChanged() {
-    console.log("App Icon changed");
-
     const changeAppIcons = this._preferences?.get_boolean("change-app-colors");
 
     if (changeAppIcons) {
