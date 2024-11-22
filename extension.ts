@@ -25,17 +25,7 @@ export default class AccentColorIconThemeExtension extends Extension {
   _accentColorChangedId: number = 0;
   _appIconChangeId: number = 0;
 
-  iconThemes = Object.values({
-    blue: "Adwaita-Blue-Default",
-    teal: "Adwaita-Teal",
-    green: "Adwaita-Green",
-    yellow: "Adwaita-Yellow",
-    orange: "Adwaita-Orange",
-    red: "Adwaita-Red",
-    pink: "Adwaita-Pink",
-    purple: "Adwaita-Purple",
-    slate: "Adwaita-Slate",
-  });
+  iconThemes = Object.values({});
 
   enable() {
     // Get the interface settings
@@ -63,6 +53,17 @@ export default class AccentColorIconThemeExtension extends Extension {
       this._onAppIconChanged.bind(this)
     )
 
+    this.iconThemes = Object.values({
+      blue: "Adwaita-Blue-Default",
+      teal: "Adwaita-Teal",
+      green: "Adwaita-Green",
+      yellow: "Adwaita-Yellow",
+      orange: "Adwaita-Orange",
+      red: "Adwaita-Red",
+      pink: "Adwaita-Pink",
+      purple: "Adwaita-Purple",
+      slate: "Adwaita-Slate",
+    });
 
     // Initial theme update
     this._onAccentColorChanged();
