@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="accent-color-icon-theme-extension">
+    <schema id="org.gnome.shell.extensions.accent-directories"
+            path="/org/gnome/shell/extensions/accent-directories/">
+        <key type="b" name="change-app-colors">
+            <default>false</default>
+            <summary>Whether to change app icons based on accent color</summary>
+            <description>Enables or disables changing app icons based on accent color</description>
+        </key>
+    </schema>
+</schemalist>

@@ -15,18 +15,25 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
-import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
+import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
 import GLib from 'gi://GLib';
 import Gio from 'gi://Gio';
 
 export default class AccentColorIconThemeExtension extends Extension {
   _settings?: Gio.Settings | null;
+  _preferences?: Gio.Settings | null;
   _accentColorChangedId: number = 0;
+  _appIconChangeId: number = 0;
 
   enable() {
     // Get the interface settings
     this._settings = new Gio.Settings({
       schema: "org.gnome.desktop.interface",
+    });
+
+    // Get Preferences
+    this._preferences = new Gio.Settings({
+      schema: "org.gnome.shell.extensions.accent-directories"
     });
 
     // Check and install missing icon themes
@@ -38,8 +45,18 @@ export default class AccentColorIconThemeExtension extends Extension {
       this._onAccentColorChanged.bind(this),
     );
 
+    // connect to app icons changed
+    this._appIconChangeId = this._preferences.connect(
+      "changed::change-app-colors",
+      this._onAppIconChanged.bind(this)
+    )
+
+
     // Initial theme update
     this._onAccentColorChanged();
+
+    // Initial app icons check
+    this._onAppIconChanged();
   }
 
   disable() {
@@ -52,8 +69,9 @@ export default class AccentColorIconThemeExtension extends Extension {
     // Optionally reset to default icon theme
     this._setIconTheme("Adwaita");
 
-    // Null out this._settings
+    // Null out settings
     this._settings = null;
+    this._preferences = null;
   }
 
   _installMissingIconThemes() {
@@ -69,6 +87,8 @@ export default class AccentColorIconThemeExtension extends Extension {
       "Adwaita-Yellow",
     ];
 
+    const changeAppIcons = this._preferences?.get_boolean("change-app-colors");
+
     const localIconsDir = GLib.get_home_dir() + "/.local/share/icons/";
     const extensionIconsDir = this.path + "/icons/";
 
@@ -80,19 +100,27 @@ export default class AccentColorIconThemeExtension extends Extension {
     iconThemes.forEach((theme) => {
       const themeDir = localIconsDir + theme;
 
-      // Check if newest icon is available in icon pack
-      if (!GLib.file_test(themeDir + "/scalable/apps/org.gnome.Nautilus.svg", GLib.FileTest.EXISTS)) {
-
-        // Remove the old theme directory if it exists
-        if (GLib.file_test(themeDir, GLib.FileTest.EXISTS)) {
-          this._removeDirectoryRecursively(themeDir);
+      // check if `version` file is available in themeDir and the number in it is greater than 2
+      const versionFilePath = `${themeDir}/version`;
+      if (GLib.file_test(versionFilePath, GLib.FileTest.EXISTS)) {
+        const [success, contents] = GLib.file_get_contents(versionFilePath);
+        if (success && parseInt(contents.toString()) > 2) {
+          if (!changeAppIcons) {
+            return;
+          } else if (GLib.file_test(themeDir + "/scalable/apps/org.gnome.Nautilus-symbolic.svg", GLib.FileTest.EXISTS)) {
+            return;
+          }
         }
-
-        // Copy the theme from icons to local icons directory
-        const sourceDir = extensionIconsDir + theme;
-        this._copyDirectory(sourceDir, themeDir);
       }
 
+      // Remove the old theme directory if it exists
+      if (GLib.file_test(themeDir, GLib.FileTest.EXISTS)) {
+        this._removeDirectoryRecursively(themeDir);
+      }
+
+      // Copy the theme from icons to local icons directory
+      const sourceDir = extensionIconsDir + theme;
+      this._copyDirectory(sourceDir, themeDir);
     });
   }
 
@@ -170,6 +198,44 @@ export default class AccentColorIconThemeExtension extends Extension {
 
     // Set the icon theme
     this._setIconTheme(iconTheme);
+  }
+
+  _onAppIconChanged() {
+    console.log("App Icon changed");
+
+    const changeAppIcons = this._preferences?.get_boolean("change-app-colors");
+
+    if (changeAppIcons) {
+      // Reinstall icon themes
+      this._installMissingIconThemes();
+    } else {
+
+      // Remove app directory from every extensions icon themes in ~/.local/share/icons/
+      const localIconsDir = GLib.get_home_dir() + "/.local/share/icons/";
+      const iconThemes = Object.values({
+        blue: "Adwaita-Blue-Default",
+        teal: "Adwaita-Teal",
+        green: "Adwaita-Green",
+        yellow: "Adwaita-Yellow",
+        orange: "Adwaita-Orange",
+        red: "Adwaita-Red",
+        pink: "Adwaita-Pink",
+        purple: "Adwaita-Purple",
+        slate: "Adwaita-Slate",
+      });
+
+      iconThemes.forEach((theme) => {
+        const appDir = localIconsDir + theme + "/scalable/apps";
+        if (GLib.file_test(appDir, GLib.FileTest.EXISTS)) {
+          this._removeDirectoryRecursively(appDir);
+        }
+      });
+    }
+
+    // reload icon theme for gnome shell
+    const iconTheme = this._settings?.get_string("icon-theme");
+    this._settings?.reset("icon-theme");
+    this._setIconTheme(iconTheme ?? "Adwaita");
   }
 
   _setIconTheme(themeName: string) {

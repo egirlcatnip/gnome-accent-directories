@@ -8,11 +8,15 @@ all: dist/extension.js
 node_modules: package.json
 	npm install
 
-dist/extension.js: node_modules
+dist/extension.js dist/prefs.js: node_modules
 	tsc
 
-$(NAME).zip: dist/extension.js
+schemas/gschemas.compiled: schemas/org.gnome.shell.extensions.$(NAME).gschema.xml
+	glib-compile-schemas schemas
+
+$(NAME).zip: dist/extension.js dist/prefs.js schemas/gschemas.compiled
 	@cp metadata.json dist/
+	@cp -r schemas dist/
 	@cp -r icons dist/
 	@(cd dist && zip ../$(NAME)@$(DOMAIN).zip -9r .)
 

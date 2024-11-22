@@ -2,3 +2,4 @@ node_modules/
 .idea/
 dist/
 accent-directories@taiwbi.com.zip
+schemas/gschemas.compiled
