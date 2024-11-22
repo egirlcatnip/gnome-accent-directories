@@ -82,6 +82,9 @@ export default class AccentColorIconThemeExtension extends Extension {
       this._appIconChangeId = 0;
     }
 
+    // Clear the iconThemes array
+    this.iconThemes = [];
+
     // Optionally reset to default icon theme
     this._setIconTheme("Adwaita");
 
