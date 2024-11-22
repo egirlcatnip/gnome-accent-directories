@@ -25,6 +25,18 @@ export default class AccentColorIconThemeExtension extends Extension {
   _accentColorChangedId: number = 0;
   _appIconChangeId: number = 0;
 
+  iconThemes = Object.values({
+    blue: "Adwaita-Blue-Default",
+    teal: "Adwaita-Teal",
+    green: "Adwaita-Green",
+    yellow: "Adwaita-Yellow",
+    orange: "Adwaita-Orange",
+    red: "Adwaita-Red",
+    pink: "Adwaita-Pink",
+    purple: "Adwaita-Purple",
+    slate: "Adwaita-Slate",
+  });
+
   enable() {
     // Get the interface settings
     this._settings = new Gio.Settings({
@@ -65,6 +77,10 @@ export default class AccentColorIconThemeExtension extends Extension {
       this._settings.disconnect(this._accentColorChangedId);
       this._accentColorChangedId = 0;
     }
+    if (this._preferences && this._appIconChangeId) {
+      this._preferences.disconnect(this._appIconChangeId);
+      this._appIconChangeId = 0;
+    }
 
     // Optionally reset to default icon theme
     this._setIconTheme("Adwaita");
@@ -75,18 +91,6 @@ export default class AccentColorIconThemeExtension extends Extension {
   }
 
   _installMissingIconThemes() {
-    const iconThemes = [
-      "Adwaita-Blue-Default",
-      "Adwaita-Green",
-      "Adwaita-Orange",
-      "Adwaita-Pink",
-      "Adwaita-Purple",
-      "Adwaita-Red",
-      "Adwaita-Slate",
-      "Adwaita-Teal",
-      "Adwaita-Yellow",
-    ];
-
     const changeAppIcons = this._preferences?.get_boolean("change-app-colors");
 
     const localIconsDir = GLib.get_home_dir() + "/.local/share/icons/";
@@ -97,7 +101,7 @@ export default class AccentColorIconThemeExtension extends Extension {
       GLib.mkdir(localIconsDir, 0o755);
     }
 
-    iconThemes.forEach((theme) => {
+    this.iconThemes.forEach((theme) => {
       const themeDir = localIconsDir + theme;
 
       // check if `version` file is available in themeDir and the number in it is greater than 2
@@ -212,19 +216,8 @@ export default class AccentColorIconThemeExtension extends Extension {
 
       // Remove app directory from every extensions icon themes in ~/.local/share/icons/
       const localIconsDir = GLib.get_home_dir() + "/.local/share/icons/";
-      const iconThemes = Object.values({
-        blue: "Adwaita-Blue-Default",
-        teal: "Adwaita-Teal",
-        green: "Adwaita-Green",
-        yellow: "Adwaita-Yellow",
-        orange: "Adwaita-Orange",
-        red: "Adwaita-Red",
-        pink: "Adwaita-Pink",
-        purple: "Adwaita-Purple",
-        slate: "Adwaita-Slate",
-      });
 
-      iconThemes.forEach((theme) => {
+      this.iconThemes.forEach((theme) => {
         const appDir = localIconsDir + theme + "/scalable/apps";
         if (GLib.file_test(appDir, GLib.FileTest.EXISTS)) {
           this._removeDirectoryRecursively(appDir);
