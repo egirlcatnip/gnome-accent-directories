@@ -20,10 +20,8 @@ import Gio from 'gi://Gio';
 import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 export default class AccentDirsPreferences extends ExtensionPreferences {
-  _preferences?: Gio.Settings
-
   fillPreferencesWindow(window: Adw.PreferencesWindow) {
-    this._preferences = new Gio.Settings({schema: "org.gnome.shell.extensions.accent-directories"});
+    const preferences: Gio.Settings = new Gio.Settings({schema: "org.gnome.shell.extensions.accent-directories"});
 
     const page = new Adw.PreferencesPage({
       title: _('General'),
@@ -44,7 +42,7 @@ export default class AccentDirsPreferences extends ExtensionPreferences {
 
     window.add(page)
 
-    this._preferences!.bind('change-app-colors', changeAppColors, 'active', Gio.SettingsBindFlags.DEFAULT);
+    preferences.bind('change-app-colors', changeAppColors, 'active', Gio.SettingsBindFlags.DEFAULT);
 
     return Promise.resolve();
   }
