@@ -21,7 +21,7 @@ import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Ex
 
 export default class AccentDirsPreferences extends ExtensionPreferences {
   fillPreferencesWindow(window: Adw.PreferencesWindow) {
-    const preferences: Gio.Settings = new Gio.Settings({schema: "org.gnome.shell.extensions.accent-directories"});
+    const preferences: Gio.Settings = this.getSettings();
 
     const page = new Adw.PreferencesPage({
       title: _('General'),

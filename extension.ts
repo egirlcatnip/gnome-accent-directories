@@ -34,9 +34,7 @@ export default class AccentColorIconThemeExtension extends Extension {
     });
 
     // Get Preferences
-    this._preferences = new Gio.Settings({
-      schema: "org.gnome.shell.extensions.accent-directories"
-    });
+    this._preferences = this.getSettings();
 
     // Check and install missing icon themes
     this._installMissingIconThemes();
