@@ -33,6 +33,19 @@ export default class AccentColorIconThemeExtension extends Extension {
       schema: "org.gnome.desktop.interface",
     });
 
+    // Initializing icon themes
+    this.iconThemes = Object.values({
+        blue: "Adwaita-Blue-Default",
+        teal: "Adwaita-Teal",
+        green: "Adwaita-Green",
+        yellow: "Adwaita-Yellow",
+        orange: "Adwaita-Orange",
+        red: "Adwaita-Red",
+        pink: "Adwaita-Pink",
+        purple: "Adwaita-Purple",
+        slate: "Adwaita-Slate",
+    });
+
     // Get Preferences
     this._preferences = this.getSettings();
 
@@ -50,18 +63,6 @@ export default class AccentColorIconThemeExtension extends Extension {
       "changed::change-app-colors",
       this._onAppIconChanged.bind(this)
     )
-
-    this.iconThemes = Object.values({
-      blue: "Adwaita-Blue-Default",
-      teal: "Adwaita-Teal",
-      green: "Adwaita-Green",
-      yellow: "Adwaita-Yellow",
-      orange: "Adwaita-Orange",
-      red: "Adwaita-Red",
-      pink: "Adwaita-Pink",
-      purple: "Adwaita-Purple",
-      slate: "Adwaita-Slate",
-    });
 
     // Initial theme update
     this._onAccentColorChanged();
@@ -110,7 +111,7 @@ export default class AccentColorIconThemeExtension extends Extension {
       const versionFilePath = `${themeDir}/version`;
       if (GLib.file_test(versionFilePath, GLib.FileTest.EXISTS)) {
         const [success, contents] = GLib.file_get_contents(versionFilePath);
-        if (success && parseInt(contents.toString()) > 3) {
+        if (success && parseInt(contents.toString()) == 3) {
           if (!changeAppIcons) {
             return;
           } else if (GLib.file_test(themeDir + "/scalable/apps/org.gnome.Nautilus-symbolic.svg", GLib.FileTest.EXISTS)) {
