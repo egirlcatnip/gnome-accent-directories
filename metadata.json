@@ -3,7 +3,7 @@
   "description": "Makes icons follow system accent color and can be used with MoreWaita",
   "uuid": "accent-directories@taiwbi.com",
   "shell-version": ["47"],
-  "version": 9,
+  "version": 10,
   "version-name": "1.3",
   "url": "https://github.com/taiwbi/gnome-accent-directories",
   "settings-schema": "org.gnome.shell.extensions.accent-directories"
