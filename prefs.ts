@@ -38,7 +38,7 @@ export default class AccentDirsPreferences extends ExtensionPreferences {
 
     const changeAppColors = new Adw.SwitchRow({
       title: _('App Icons'),
-      subtitle: _('Match app icons with accent color (Adwaita colors only).'),
+      subtitle: _('Match app icons with accent color (Adwaita colored icons only).'),
     });
     GeneralGroup.add(changeAppColors);
 
