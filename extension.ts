@@ -24,6 +24,7 @@ export default class AccentColorIconThemeExtension extends Extension {
   _preferences?: Gio.Settings | null;
   _accentColorChangedId: number = 0;
   _appIconChangeId: number = 0;
+  _customThemeChangedId: number | undefined = 0;
 
   iconThemes = Object.values({});
 
@@ -35,15 +36,15 @@ export default class AccentColorIconThemeExtension extends Extension {
 
     // Initializing icon themes
     this.iconThemes = Object.values({
-        blue: "Adwaita-Blue-Default",
-        teal: "Adwaita-Teal",
-        green: "Adwaita-Green",
-        yellow: "Adwaita-Yellow",
-        orange: "Adwaita-Orange",
-        red: "Adwaita-Red",
-        pink: "Adwaita-Pink",
-        purple: "Adwaita-Purple",
-        slate: "Adwaita-Slate",
+      blue: "Adwaita-Blue-Default",
+      teal: "Adwaita-Teal",
+      green: "Adwaita-Green",
+      yellow: "Adwaita-Yellow",
+      orange: "Adwaita-Orange",
+      red: "Adwaita-Red",
+      pink: "Adwaita-Pink",
+      purple: "Adwaita-Purple",
+      slate: "Adwaita-Slate",
     });
 
     // Get Preferences
@@ -69,6 +70,14 @@ export default class AccentColorIconThemeExtension extends Extension {
 
     // Initial app icons check
     this._onAppIconChanged();
+
+    // Update icon theme on custom themes change
+    const themeKeys = ['blue-theme', 'teal-theme', 'green-theme', 'yellow-theme',
+      'orange-theme', 'red-theme', 'pink-theme', 'purple-theme', 'slate-theme'];
+
+    this._customThemeChangedId = themeKeys.map(key =>
+      this._preferences?.connect(`changed::${key}`, this._onAccentColorChanged.bind(this))
+    )[0];
   }
 
   disable() {
@@ -80,6 +89,10 @@ export default class AccentColorIconThemeExtension extends Extension {
     if (this._preferences && this._appIconChangeId) {
       this._preferences.disconnect(this._appIconChangeId);
       this._appIconChangeId = 0;
+    }
+    if (this._preferences && this._customThemeChangedId) {
+      this._preferences.disconnect(this._customThemeChangedId);
+      this._customThemeChangedId = 0;
     }
 
     // Clear the iconThemes array
@@ -187,21 +200,11 @@ export default class AccentColorIconThemeExtension extends Extension {
     // Get the current accent color
     const accentColor: string = this._settings?.get_string("accent-color") ?? "blue";
 
-    // Map accent colors to icon themes
-    const iconThemeMap: { [key: string]: string } = {
-      blue: "Adwaita-Blue-Default",
-      teal: "Adwaita-Teal",
-      green: "Adwaita-Green",
-      yellow: "Adwaita-Yellow",
-      orange: "Adwaita-Orange",
-      red: "Adwaita-Red",
-      pink: "Adwaita-Pink",
-      purple: "Adwaita-Purple",
-      slate: "Adwaita-Slate",
-    };
+    // Get custom theme from preferences
+    const customTheme = this._preferences?.get_string(`${accentColor}-theme`);
 
-    // Get the corresponding icon theme or default to base theme
-    const iconTheme = iconThemeMap[accentColor] || "Adwaita";
+    // Get the corresponding icon theme or default to Adwaita
+    const iconTheme = customTheme || "Adwaita";
 
     // Set the icon theme
     this._setIconTheme(iconTheme);

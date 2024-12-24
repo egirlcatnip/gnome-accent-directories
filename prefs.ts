@@ -17,6 +17,8 @@
  */
 import Adw from 'gi://Adw';
 import Gio from 'gi://Gio';
+import GLib from 'gi://GLib';
+import Gtk from 'gi://Gtk';
 import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 export default class AccentDirsPreferences extends ExtensionPreferences {
@@ -36,14 +38,88 @@ export default class AccentDirsPreferences extends ExtensionPreferences {
 
     const changeAppColors = new Adw.SwitchRow({
       title: _('App Icons'),
-      subtitle: _('Whether to change app icons based on accent color or not.'),
+      subtitle: _('Match app icons with accent color (Adwaita colors only).'),
     });
     GeneralGroup.add(changeAppColors);
 
-    window.add(page)
+    // Add custom theme selection group
+    const ThemeGroup = new Adw.PreferencesGroup({
+      title: _('Custom Icon Themes'),
+      description: _('Select custom icon themes for each accent color'),
+    });
+    page.add(ThemeGroup);
+
+    // Get available icon themes
+    const iconThemes = this._getAvailableIconThemes();
+
+    // Create dropdown for each accent color
+    const accentColors = [
+      'blue', 'teal', 'green', 'yellow',
+      'orange', 'red', 'pink', 'purple', 'slate'
+    ];
+
+    accentColors.forEach(color => {
+      const row = new Adw.ComboRow({
+        title: _(color.charAt(0).toUpperCase() + color.slice(1)),
+        model: this._createIconThemeModel(iconThemes),
+        selected: this._getSelectedIndex(preferences, color, iconThemes)
+      });
+
+      row.connect('notify::selected', () => {
+        const selected = iconThemes[row.selected];
+        preferences.set_string(`${color}-theme`, selected);
+      });
+
+      ThemeGroup.add(row);
+    });
+
+    window.add(page);
 
     preferences.bind('change-app-colors', changeAppColors, 'active', Gio.SettingsBindFlags.DEFAULT);
 
     return Promise.resolve();
+  }
+
+  _getAvailableIconThemes(): string[] {
+    const themes = new Set<string>();
+    const directories = [
+      '/usr/local/share/icons',
+      '/usr/share/icons',
+      GLib.get_home_dir() + '/.local/share/icons',
+      GLib.get_home_dir() + '/.icons'
+    ];
+
+    // Scan directories for icon themes
+    directories.forEach(dir => {
+      if (GLib.file_test(dir, GLib.FileTest.IS_DIR)) {
+        const directory = Gio.File.new_for_path(dir);
+        const enumerator = directory.enumerate_children('standard::*', Gio.FileQueryInfoFlags.NONE, null);
+
+        let info;
+        while ((info = enumerator.next_file(null))) {
+          const path = dir + '/' + info.get_name();
+          if (this._isValidIconTheme(path)) {
+            themes.add(info.get_name());
+          }
+        }
+      }
+    });
+
+    return Array.from(themes).sort();
+  }
+
+  _isValidIconTheme(path: string): boolean {
+    return GLib.file_test(path + '/index.theme', GLib.FileTest.EXISTS);
+  }
+
+  _createIconThemeModel(themes: string[]): any {
+    return new Gtk.StringList({ strings: themes });
+  }
+
+  _getSelectedIndex(preferences: Gio.Settings, color: string, themes: string[]): number {
+    const savedTheme = preferences.get_string(`${color}-theme`);
+
+    const theme = savedTheme;
+    return Math.max(0, themes.indexOf(theme));
   }
 }
