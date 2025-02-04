@@ -34,7 +34,7 @@
             <summary>Custom icon theme for red accent</summary>
         </key>
         <key type="s" name="pink-theme">
-            <default>"Adwaita-Red"</default>
+            <default>"Adwaita-Pink"</default>
             <summary>Custom icon theme for pink accent</summary>
         </key>
         <key type="s" name="purple-theme">
