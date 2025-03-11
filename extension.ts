@@ -124,7 +124,7 @@ export default class AccentColorIconThemeExtension extends Extension {
       const versionFilePath = `${themeDir}/version`;
       if (GLib.file_test(versionFilePath, GLib.FileTest.EXISTS)) {
         const [success, contents] = GLib.file_get_contents(versionFilePath);
-        if (success && parseInt(new TextDecoder().decode(contents)) == 4) {
+        if (success && parseInt(new TextDecoder().decode(contents)) == 5) {
           if (!changeAppIcons) {
             return;
           } else if (GLib.file_test(themeDir + "/scalable/apps/org.gnome.Nautilus-symbolic.svg", GLib.FileTest.EXISTS)) {
